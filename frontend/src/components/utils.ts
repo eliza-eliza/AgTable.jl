@@ -107,3 +107,13 @@ export function extractTimeInMilliseconds(timestamp: number) {
 
     return timeInMilliseconds;
 }
+
+export const fetchData = async (url:string, params:string) => {
+    try {
+        const response = await fetch(url + params);
+        return await response.json();
+    } catch (error) {
+        console.error("Error loading data", error);
+        return [];
+    }
+};

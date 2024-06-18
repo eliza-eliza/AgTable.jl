@@ -1,22 +1,53 @@
-import React, { useCallback, useMemo, useState, forwardRef, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState, forwardRef } from "react";
 import { AgGridReact } from "ag-grid-react";
-import * as util from 'util';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-enterprise";
 import "./aggrid.css";
-import { displayDateString, displayDateTimeString, displayTimeString, extractTimeInMilliseconds } from "./utils.ts";
+import * as util from 'util';
+import { ServerSideRowModelModule } from "ag-grid-enterprise";
+import { ModuleRegistry } from "ag-grid-enterprise";
+import { displayDateString, displayDateTimeString, displayTimeString, extractTimeInMilliseconds, fetchData } from "./utils.ts";
 import NumberFilter from "./custom_filters/number_filter.jsx";
 import DateFilter from "./custom_filters/date_filter.jsx";
 import ColumnFilter from "./custom_filters/column_filter.jsx";
 
-const AgGrid = ({ table, height, index, uuidKey }) => {
+ModuleRegistry.registerModules([ServerSideRowModelModule]);
+
+const AgGridUrl = ({ table, height, index, uuidKey }) => {
     const [filters, setFilters] = useState(false);
     const [filterLayout, setFilterLayout] = useState(null);
     const [filterHeight, setFilterHeight] = useState(null);
-
+    const pageSize = table.rowData.pageSize;
     const initialState = JSON.parse(localStorage.getItem(uuidKey + index));
     const initialWidth = localStorage.getItem(uuidKey + index + "width");
+
+    const getRows = async (params) => {
+        const { startRow, filterModel, sortModel } = params.request;
+        const filters = filterModel ? Object.entries(filterModel).map(([key, value]) => {
+            if (value.min !== undefined && value.max !== undefined) {
+                return `${key}_min=${value.min}&${key}_max=${value.max}`;
+            } else if (Array.isArray(value.values)) {
+                return `${key}=${value.values.join(",")}`;
+            }
+            return "";
+        }).join("&") : "";
+
+        const sort = sortModel ? sortModel.map(({ colId, sort }) => {
+            return `sort_${colId}=${sort}`;
+        }).join("&") : "";
+        
+        const filterQuery = filters ? `&${filters}` : "";
+        const data = await fetchData(table.rowData.url, `?page=${startRow / pageSize + 1}&page_size=${pageSize}${filterQuery}&${sort}`);
+        params.success({ rowData: data, getLastRowIndex: startRow + data.length });
+    };
+
+    const getSetFilterValues = async (params, columnId) => {
+        const filterModel = params.api.getFilterModel();
+        const filters = filterModel ? Object.entries(filterModel).map(([key, value]) => `${key}=${value.values}`).join("&") : "";
+        const filterQuery = filters ? `&${filters}` : "";
+        return await fetchData(table.rowData.url, `/unique_values?column=${columnId}${filterQuery}`);
+    };
 
     const getCellRenderer = (params, column) => {
         let value = params.value;
@@ -81,11 +112,11 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
                 return "agSetColumnFilter";
             case "number":
                 return forwardRef(({ column, api }, ref) => (
-                    <NumberFilter column={column} api={api} formatter={coldef.formatter} ref={ref} />
+                    <NumberFilter column={column} api={api} formatter={coldef.formatter} ref={ref} url={table.rowData.url}/>
                 ));
             case "date":
                 return forwardRef(({ column, api }, ref) => (
-                    <DateFilter column={column} api={api} formatter={coldef.formatter} ref={ref} />
+                    <DateFilter column={column} api={api} formatter={coldef.formatter} ref={ref} url={table.rowData.url}/>
                 ));
             default:
                 return undefined;
@@ -126,7 +157,6 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
                 width: coldef.width,
                 flex: !coldef.width && table.flex && 1,
                 initialSort: coldef.defaultSort,
-                autoHeight: true,
                 filter: false,
             };
 
@@ -139,8 +169,11 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
                 if (coldef.filter == "text") {
                     colDef.filterParams = {
                         buttons: ["reset", "apply"],
+                        refreshValuesOnOpen: true,
                         cellRenderer: (params) => getFilterItemRenderer(params, coldef),
-                        searchPlaceholder: 'Search for name ...',
+                        values: async (params) => {
+                            params.success(await getSetFilterValues(params, coldef.fieldName));
+                        },
                     }
                 }
             }
@@ -155,13 +188,12 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
                 filter: forwardRef(({ api }, ref) => <ColumnFilter api={api} filterLayout={filterLayout} filterHeight={filterHeight} ref={ref} />),
             });
         };
-
         const filterLayout = generateFilterLayout();
         const filterHeight = getFilterHeight();
         setFilterLayout(filterLayout);
         setFilterHeight(filterHeight);
-        setFilters(colDefs.some(colDef => colDef.filter) || table.columnFilter);
-
+        setFilters(table.columnDefs.some(colDef => colDef.filter) || table.columnFilter);
+        
         return colDefs;
     }, [table]);
 
@@ -253,6 +285,8 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
         if (!filters) return;
 
         const filtersToolPanel = params.api.getToolPanelInstance("filters");
+        if (!filtersToolPanel) return;
+
         filtersToolPanel.expandFilters();
         filterLayout && filtersToolPanel.setFilterLayout([filterLayout]);
 
@@ -263,30 +297,54 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
         });
     };
 
+    const updateFilterValues = (params) => {
+        const allColumns = params.api.getAllGridColumns();
+        const colId = params.columns[0]?.colId;
+        allColumns.forEach(col => {
+            if (col.getColDef().filter === "agSetColumnFilter") {
+                params.api.getFilterInstance(col.getColId(), instance => {
+                    if (instance && colId && col.getColId() !== colId) {
+                        instance.refreshFilterValues();
+                    }
+                });
+            }
+        });
+    };
+
     const onStateUpdated = (params) => {
         localStorage.setItem(uuidKey + index, JSON.stringify(params.state));
         const filtersToolPanel = params.api.getToolPanelInstance("filters");
         filtersToolPanel && localStorage.setItem(uuidKey + index + "width", filtersToolPanel.eGui.clientWidth);
     };
-
+    
     return (
         <div className="ag-theme-quartz aggrid" style={height}>
             <AgGridReact
                 key={index}
-                rowData={table.rowData}
+
+                rowModelType="serverSide"
+                maxBlocksInCache={0}
+                cacheBlockSize={pageSize}
+                serverSideDatasource={{ getRows: getRows }}
+
+                sideBar={filters && sideBar}
+                animateRows={true}
+                debug={true}
+                
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
-                sideBar={filters && sideBar}
                 initialState={initialState}
                 headerHeight={table.headerHeight}
                 rowHeight={table.rowHeight}
                 multiSortKey={"ctrl"}
+
                 onGridReady={handleGridReady}
                 onFirstDataRendered={onFirstDataRendered}
                 onStateUpdated={onStateUpdated}
+                onFilterChanged={updateFilterValues}
             />
         </div>
     );
 };
 
-export default AgGrid;
+export default AgGridUrl;

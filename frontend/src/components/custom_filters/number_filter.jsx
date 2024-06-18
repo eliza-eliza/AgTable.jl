@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState, forwardRef, useImperativeHandle } from "react";
+import { fetchData } from "../utils.ts";
 
-const NumberFilter = forwardRef(({ column, api, formatter }, ref) => {
+const NumberFilter = forwardRef(({ column, api, formatter, url }, ref) => {
+    const [min, setMin] = useState(0);
+    const [max, setMax] = useState(0);
     const [minValue, setMinValue] = useState(0);
     const [maxValue, setMaxValue] = useState(0);
     const [isMinEditing, setIsMinEditing] = useState(false);
@@ -14,29 +17,50 @@ const NumberFilter = forwardRef(({ column, api, formatter }, ref) => {
 
     const calculateStep = (min, max) => (max - min === 0 ? 1 : (max - min) / 100);
 
-    const [max, min, step] = useMemo(() => {
-        const values = [];
-        const displayedValues = [];
+    useEffect(() => {
+        const fetchMinMaxValues = async () => {
+            if (url) {
+                try {
+                    const result = await fetchData(url, `/maxmin?column=${filter}`);
+                    setMin(result.min);
+                    setMax(result.max);
+                    setMinValue(result.min);
+                    setMaxValue(result.max);
+                    setMinInputValue(result.min.toString());
+                    setMaxInputValue(result.max.toString());
+                } catch (error) {
+                    console.error("Error fetching min/max values", error);
+                }
+            } else {
+                const values = [];
+                const displayedValues = [];
+                api.forEachNode((node) => {
+                    values.push(node.data[filter]);
+                    if (node.displayed) {
+                        displayedValues.push(node.data[filter]);
+                    }
+                });
 
-        api.forEachNode((node) => {
-            values.push(node.data[filter]);
-            node.displayed && displayedValues.push(node.data[filter]);
-        });
+                const maxVal = Math.max(...values);
+                const minVal = Math.min(...values);
+                const maxDisplayed = displayedValues.length ? Math.max(...displayedValues) : 0;
+                const minDisplayed = displayedValues.length ? Math.min(...displayedValues) : 0;
 
-        let maxVal = Math.max(...values);
-        let minVal = Math.min(...values);
-        const maxDisplayed = displayedValues.length ? Math.max(...displayedValues) : 0;
-        const minDisplayed = displayedValues.length ? Math.min(...displayedValues) : 0;
+                if (!isNaN(minVal) && !isNaN(maxVal)) {
+                    setMin(minVal);
+                    setMax(maxVal);
+                    setMinValue(minDisplayed);
+                    setMaxValue(maxDisplayed);
+                    setMinInputValue(minDisplayed.toString());
+                    setMaxInputValue(maxDisplayed.toString());
+                }
+            }
+        };
 
-        if (isNaN(minVal) || isNaN(minVal)) return [0, 0, 1];
+        fetchMinMaxValues();
+    }, [url, filter, api]);
 
-        setMaxValue(maxDisplayed);
-        setMinValue(minDisplayed);
-        setMaxInputValue(maxDisplayed.toString())
-        setMinInputValue(minInputValue.toString())
-
-        return [maxVal, minVal, calculateStep(minVal, maxVal)];
-    }, [api]);
+    const step = useMemo(() => calculateStep(min, max), [min, max]);
 
     useEffect(() => {
         const percent1 = ((minValue - min) / (max - min)) * 100;
@@ -168,15 +192,19 @@ const NumberFilter = forwardRef(({ column, api, formatter }, ref) => {
     };
 
     useImperativeHandle(ref, () => ({
-        getModel: () => ({
-            min: minValue,
-            max: maxValue,
-        }),
+        getModel: () => {
+            if (min == 0 && max == 0) return null;
+            if (min == minValue && max == maxValue) return null;
+            return {
+                min: minValue,
+                max: maxValue,
+            }
+        },
         doesFilterPass: (params) => {
             const value = params.data[filter];
             return value >= minValue && value <= maxValue;
         },
-        isFilterActive: () => minValue !== min || maxValue !== max,
+        isFilterActive: () => minValue !== min || maxValue !== max || (min !== 0 && max !== 0),
     }));
 
 

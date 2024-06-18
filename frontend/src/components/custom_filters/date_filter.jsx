@@ -7,7 +7,9 @@ import {
     parseDateTimeValue,
 } from "../utils.ts";
 
-const DateFilter = forwardRef(({ column, api, formatter }, ref) => {
+const DateFilter = forwardRef(({ column, api, formatter, url }, ref) => {
+    const [min, setMin] = useState(0);
+    const [max, setMax] = useState(0);
     const [inputMin, setInputMin] = useState(0);
     const [inputMax, setInputMax] = useState(0);
     const [minValue, setMinValue] = useState(0);
@@ -17,39 +19,57 @@ const DateFilter = forwardRef(({ column, api, formatter }, ref) => {
     const header = column.userProvidedColDef.headerName;
     const sliderRef = useRef(null);
 
-    const [max, min] = useMemo(() => {
-        let values = [];
-        let displayedValues = [];
+    useEffect(() => {
+        const fetchMinMaxValues = async () => {
+            if (url) {
+                try {
+                    const result = await fetchData(url, `/maxmin?column=${filter}`);
+                    setInputMin(formatValue(result.min));
+                    setInputMax(formatValue(result.max));
+                    setMinValue(result.min);
+                    setMaxValue(result.max);
+                    setMin(result.min);
+                    setMax(result.max);
+                } catch (error) {
+                    console.error("Error fetching min/max values", error);
+                }
+            } else {
+                let values = [];
+                let displayedValues = [];
 
-        api.forEachNode((node) => {
-            const value = formatter == "time" ? extractTimeInMilliseconds(node.data[filter]) : node.data[filter];
-            values.push(value)
-            node.displayed && displayedValues.push(value);
-        });
+                api.forEachNode((node) => {
+                    const value = formatter == "time" ? extractTimeInMilliseconds(node.data[filter]) : node.data[filter];
+                    values.push(value)
+                    node.displayed && displayedValues.push(value);
+                });
 
-        let maxVal = Math.max(...values);
-        let minVal = Math.min(...values);
-        let maxDisplayed = displayedValues.length ? Math.max(...displayedValues) : 0;
-        let minDisplayed = displayedValues.length ? Math.min(...displayedValues) : 0;
+                let maxVal = Math.max(...values);
+                let minVal = Math.min(...values);
+                let maxDisplayed = displayedValues.length ? Math.max(...displayedValues) : 0;
+                let minDisplayed = displayedValues.length ? Math.min(...displayedValues) : 0;
 
-        if (isNaN(minVal) || isNaN(minVal)) return [0, 0];
+                if (isNaN(minVal) || isNaN(minVal)) return [0, 0];
 
-        const formatValue = (value) => {
-            switch (formatter) {
-                case "datetime": return displayDateTimeString(value);
-                case "date": return displayDateString(value);
-                case "time": return displayTimeString(value);
-                default: return value;
+                const formatValue = (value) => {
+                    switch (formatter) {
+                        case "datetime": return displayDateTimeString(value);
+                        case "date": return displayDateString(value);
+                        case "time": return displayTimeString(value);
+                        default: return value;
+                    }
+                };
+
+                setInputMin(formatValue(minDisplayed));
+                setInputMax(formatValue(maxDisplayed));
+                setMinValue(minDisplayed);
+                setMaxValue(maxDisplayed);
+                setMin(minVal);
+                setMax(maxVal);
             }
         };
 
-        setInputMin(formatValue(minDisplayed));
-        setInputMax(formatValue(maxDisplayed));
-        setMinValue(minDisplayed);
-        setMaxValue(maxDisplayed);
-
-        return [maxVal, minVal];
-    }, [api]);
+        fetchMinMaxValues();
+    }, [url, filter, api]);
 
     useEffect(() => {
         const percent1 = ((minValue - min) / (max - min)) * 100;

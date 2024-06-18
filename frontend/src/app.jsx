@@ -1,5 +1,5 @@
 import React from "react";
-import { LicenseManager } from "@ag-grid-enterprise/core";
+import { LicenseManager } from "ag-grid-enterprise";
 import Panel from "./components/panel.jsx";
 import Favicon from "./favicon.jsx";
 import "./app.css";

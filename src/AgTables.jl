@@ -6,6 +6,7 @@ export ag_panel,
     ag_save
 
 export AGPanel,
+    AGURL,
     AGTable,
     AGFormatter,
     AGThreshold
@@ -43,7 +44,7 @@ export AG_ASC,
 
 using Serde
 using OrderedCollections
-using Dates, SHA, UUIDs
+using Dates, SHA, UUIDs, HTTP
 
 abstract type AbstractColumnDef end
 
@@ -59,6 +60,21 @@ using .AGColumns
 
 include("data_utils.jl")
 
+struct AGURL
+    url::String
+    page_size::Integer
+
+    function AGURL(
+        url::String;
+        page_size::Integer = 10,        
+    )
+        new(
+            url,
+            page_size,
+        )
+    end
+end
+
 """
     AGTable
 
@@ -68,7 +84,7 @@ See also: [`ag_table`](@ref), [`ag_show`](@ref), [`ag_save`](@ref).
 """
 Base.@kwdef struct AGTable
     name::String
-    row_data::Vector{Dict{String,Any}}
+    row_data::Union{Vector{Dict{String,Any}},AGURL}
     resize::Bool
     flex::Bool
     header_height::Integer
@@ -116,6 +132,29 @@ function ag_table(
     return AGTable(
         name = name,
         row_data = new_row_data,
+        resize = resize,
+        flex = flex,
+        header_height = header_height,
+        row_height = row_height,
+        column_filter = column_filter,
+        column_defs = new_column_defs,
+    )
+end
+
+function ag_table(
+    row_data::AGURL,
+    column_defs::AbstractColumnDef...;
+    name::AbstractString = "Sheet$(AG_TABLE_ID[] += 1)",
+    resize::Bool = true,
+    flex::Bool = true,
+    header_height::Integer = 40,
+    row_height::Integer = 39,
+    column_filter::Bool = false,
+)
+    new_column_defs = fetch_and_format_data(row_data.url, column_defs)
+    return AGTable(
+        name = name,
+        row_data = row_data,
         resize = resize,
         flex = flex,
         header_height = header_height,
@@ -204,6 +243,10 @@ function Serde.SerJson.ser_name(::Type{<:AGPanel}, ::Val{T}) where {T}
 end
 
 function Serde.SerJson.ser_name(::Type{<:AGTable}, ::Val{T}) where {T}
+    return to_camelcase(T)
+end
+
+function Serde.SerJson.ser_name(::Type{<:AGURL}, ::Val{T}) where {T}
     return to_camelcase(T)
 end
 

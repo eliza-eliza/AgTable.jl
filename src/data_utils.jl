@@ -16,7 +16,7 @@ function flatten(data::AbstractDict{K,V}; delimiter::AbstractString = "_") where
         key = string(key)
         if isa(value, AbstractDict)
             for (k, v) in flatten(value; delimiter = delimiter)
-                result[key * delimiter * k] = v
+                result[key*delimiter*k] = v
             end
         else
             result[key] = value
@@ -32,7 +32,7 @@ function flatten(data::T; delimiter::AbstractString = "_") where {T}
         key = string(key)
         if !issimple(value)
             for (k, v) in flatten(value; delimiter = delimiter)
-                result[key * delimiter * k] = v
+                result[key*delimiter*k] = v
             end
         else
             result[key] = value
@@ -104,4 +104,20 @@ function format_row_data(
         push!(n_rows, n_row)
     end
     return n_defs, n_rows
+end
+
+function fetch_and_format_data(url, column_defs)
+    try
+        response = HTTP.get("$url?page=1&page_size=3")
+
+        if response.status == 200
+            data = Serde.parse_json(String(response.body))
+            new_column_defs, _ = format_row_data(column_defs, data)
+            return new_column_defs
+        else
+            error("Error: Received status code $(response.status)")
+        end
+    catch e
+        error("Error: $(e)")
+    end
 end
