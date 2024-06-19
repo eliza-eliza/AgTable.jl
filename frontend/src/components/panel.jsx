@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import AgGrid from "./aggrid.jsx";
 
 const Panel = React.memo(({ table }) => {
@@ -38,7 +38,12 @@ const Panel = React.memo(({ table }) => {
                     </div>
                 ))}
             </div>
-            <AgGrid table={table.tables[displayedIndex]} height={tableHeight} index={displayedIndex} uuidKey={table.uuidKey} />
+            <AgGrid 
+                table={table.tables[displayedIndex]} 
+                height={tableHeight} 
+                index={displayedIndex} 
+                uuidKey={table.uuidKey} 
+            />
         </div>
     );
 });

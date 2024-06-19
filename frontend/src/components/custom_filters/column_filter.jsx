@@ -93,6 +93,7 @@ const ColumnFilter = forwardRef(({ api, filterLayout, filterHeight }, ref) => {
 
     useImperativeHandle(ref, () => ({
         getModel: () => ({}),
+        setModel() {},
         doesFilterPass: () => true,
         isFilterActive: () => false,
     }));

@@ -172,6 +172,7 @@ const NumberFilter = forwardRef(({ column, api, formatter }, ref) => {
             min: minValue,
             max: maxValue,
         }),
+        setModel() {},
         doesFilterPass: (params) => {
             const value = params.data[filter];
             return value >= minValue && value <= maxValue;

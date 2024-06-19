@@ -17,8 +17,7 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
 
     const initialState = JSON.parse(localStorage.getItem(uuidKey + index));
     const initialWidth = localStorage.getItem(uuidKey + index + "width");
-
-    console.log(table);
+    const commonFilterModel = localStorage.getItem("filterModel");
 
     const getCellRenderer = (params, column) => {
         let value = params.value;
@@ -229,9 +228,7 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
     };
 
     const onFirstDataRendered = useCallback((params) => {
-        if (initialState) return;
-
-        table.columnDefs.map((column) => {
+        initialState && table.columnDefs.map((column) => {
             if (column.filterInclude && column.filterInclude.length) {
                 applyFilter(params, column.fieldName, column.filterInclude.filter(value => !column.filterExclude.includes(value)));
             } else if (column.filterExclude && column.filterExclude.length) {
@@ -243,6 +240,11 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
                 const filteredValues = Object.keys(uniqueValues).filter(value => uniqueValues[value]);
                 applyFilter(params, column.fieldName, filteredValues.filter(value => !column.filterExclude.includes(value)));
             }
+        });
+
+        commonFilterModel != "undefined" && Object.entries(JSON.parse(commonFilterModel)).forEach(([key, value]) => {
+            params.api.setColumnFilterModel(key, value)
+                .then(() => params.api.onFilterChanged());
         });
     }, [table]);
 
@@ -267,9 +269,11 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
 
     const onStateUpdated = (params) => {
         localStorage.setItem(uuidKey + index, JSON.stringify(params.state));
+        localStorage.setItem("filterModel", JSON.stringify(params.state.filter?.filterModel));
         const filtersToolPanel = params.api.getToolPanelInstance("filters");
         filtersToolPanel && localStorage.setItem(uuidKey + index + "width", filtersToolPanel.eGui.clientWidth);
     };
+    
 
     return (
         <div className="ag-theme-quartz aggrid" style={height}>
