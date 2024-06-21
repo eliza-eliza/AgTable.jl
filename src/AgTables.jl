@@ -5,6 +5,8 @@ export ag_panel,
     ag_show,
     ag_save
 
+export ag_define_headers
+
 export AGPanel,
     AGURL,
     AGTable,
@@ -60,13 +62,25 @@ using .AGColumns
 
 include("data_utils.jl")
 
+"""
+    AGURL(url::String; kw...)
+
+Type that contains the necessary information about server-side model for table.
+
+## Keyword arguments
+| Name::Type | Default (Possible values) | Description |
+|:-----------|:--------------------------|:------------|
+| `page_size::Integer` | `100` | Block size for the data request. |
+
+See also: [`ag_table`](@ref).
+"""
 struct AGURL
     url::String
     page_size::Integer
 
     function AGURL(
         url::String;
-        page_size::Integer = 10,        
+        page_size::Integer = 100,        
     )
         new(
             url,
@@ -98,13 +112,13 @@ function Base.show(io::IO, h::AGTable)
 end
 
 """
-    ag_table(data::Vector{T}, column_defs::AbstractColumnDef...; kw...) -> AGTable
+    ag_table(row_data::Vector{T}, column_defs::AbstractColumnDef...; kw...) -> AGTable
 
-Creates a table using `data`, where elements can be `NamedTuple`s, `Dict`s, or custom types.
+Creates a table using `row_data`, where elements can be `NamedTuple`s, `Dict`s, custom types or `AGURL` for server-side model.
 With `column_defs` you can configure parameters and formatting of [`columns`](@ref column).
 
 !!! warning
-    Adding more than 100K `data` rows to a table may cause performance issues.
+    Adding more than 100K `row_data` rows to a table may cause performance issues.
 
 ## Keyword arguments
 | Name::Type | Default (Possible values) | Description |
@@ -151,7 +165,7 @@ function ag_table(
     row_height::Integer = 39,
     column_filter::Bool = false,
 )
-    new_column_defs = fetch_and_format_data(row_data.url, column_defs)
+    new_column_defs = order_column_defs(column_defs)
     return AGTable(
         name = name,
         row_data = row_data,

@@ -5,7 +5,7 @@ import {
     displayTimeString,
     extractTimeInMilliseconds,
     parseDateTimeValue,
-} from "../utils.ts";
+} from "../utils/utils.js";
 
 const DateFilter = forwardRef(({ column, api, formatter, url }, ref) => {
     const [min, setMin] = useState(0);
@@ -84,9 +84,7 @@ const DateFilter = forwardRef(({ column, api, formatter, url }, ref) => {
                 setIsSlide(false);
             }
         };
-
         document.addEventListener("mouseup", handleMouseUp);
-
         return () => {
             document.removeEventListener("mouseup", handleMouseUp);
         };
@@ -94,10 +92,14 @@ const DateFilter = forwardRef(({ column, api, formatter, url }, ref) => {
 
     const [dateFormatter, patern] = useMemo(() => {
         switch (formatter) {
-            case "datetime": return [displayDateTimeString, "[0-9]{2}.[0-9]{2}.[0-9]{4}T[0-9]{2}:[0-9]{2}"]
-            case "date": return [displayDateString, "[0-9]{2}.[0-9]{2}.[0-9]{4}"]
-            case "time": return [displayTimeString, "[0-9]{2}:[0-9]{2}"]
-            default: return [(value) => value, ".*"];
+            case "datetime": 
+                return [displayDateTimeString, "[0-9]{2}.[0-9]{2}.[0-9]{4}T[0-9]{2}:[0-9]{2}"]
+            case "date": 
+                return [displayDateString, "[0-9]{2}.[0-9]{2}.[0-9]{4}"]
+            case "time": 
+                return [displayTimeString, "[0-9]{2}:[0-9]{2}"]
+            default: 
+                return [(value) => value, ".*"];
         }
     }, [formatter]);
 
@@ -168,15 +170,19 @@ const DateFilter = forwardRef(({ column, api, formatter, url }, ref) => {
     }
 
     useImperativeHandle(ref, () => ({
-        getModel: () => ({
-            min: minValue,
-            max: maxValue,
-        }),
+        getModel: () => {
+            if (min == 0 && max == 0) return null;
+            if (min == minValue && max == maxValue) return null;
+            return {
+                min: minValue,
+                max: maxValue,
+            }
+        },
         doesFilterPass: (params) => {
-            const value = params.data[filter];
+            const value = formatter == "time" ? extractTimeInMilliseconds(params.data[filter]) : params.data[filter];
             return value >= minValue && value <= maxValue;
         },
-        isFilterActive: () => minValue !== min || maxValue !== max,
+        isFilterActive: () => minValue !== min || maxValue !== max || (min !== 0 && max !== 0)
     }));
 
     const updateFilter = () => {

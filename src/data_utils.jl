@@ -106,18 +106,21 @@ function format_row_data(
     return n_defs, n_rows
 end
 
-function fetch_and_format_data(url, column_defs)
-    try
-        response = HTTP.get("$url?page=1&page_size=3")
-
-        if response.status == 200
-            data = Serde.parse_json(String(response.body))
-            new_column_defs, _ = format_row_data(column_defs, data)
-            return new_column_defs
-        else
-            error("Error: Received status code $(response.status)")
-        end
-    catch e
-        error("Error: $(e)")
+function order_column_defs(column_defs::Tuple{Vararg{AbstractColumnDef}})
+    new_column_defs = Vector{AbstractColumnDef}()
+    for coldef in column_defs
+        index = findfirst(z -> z.field_name == coldef.field_name, new_column_defs)
+        index !== nothing ? new_column_defs[index] = coldef : push!(new_column_defs, coldef)
     end
+    return new_column_defs
+end
+
+function ag_define_headers(headers::AbstractArray{String})
+    column_defs = Vector{AbstractColumnDef}()
+
+    for name in headers
+        push!(column_defs, AgStringColumnDef(; field_name = name))
+    end
+
+    return column_defs
 end

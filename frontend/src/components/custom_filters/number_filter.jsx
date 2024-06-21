@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState, forwardRef, useImperativeHandle } from "react";
-import { fetchData } from "../utils.ts";
+import { fetchData } from "../utils/utils.js";
 
 const NumberFilter = forwardRef(({ column, api, formatter, url }, ref) => {
     const [min, setMin] = useState(0);
@@ -75,9 +75,7 @@ const NumberFilter = forwardRef(({ column, api, formatter, url }, ref) => {
                 setIsSlide(false);
             }
         };
-
         document.addEventListener("mouseup", handleMouseUp);
-
         return () => {
             document.removeEventListener("mouseup", handleMouseUp);
         };

@@ -32,6 +32,10 @@ nothing # hide
     <iframe src="../table_example.html" style="height:200px;width:100%;"></iframe>
 ```
 
+```@docs
+AGURL
+```
+
 # Panel
 
 ```@docs

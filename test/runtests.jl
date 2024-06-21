@@ -11,7 +11,7 @@ const skip_fileds = Set{Symbol}([
     :license_key,
 ])
 
-function Base.:(==)(l::T, r::T) where {T<:Union{<:AGTable,<:AbstractColumnDef,<:AGPanel}}
+function Base.:(==)(l::T, r::T) where {T<:Union{<:AGTable,<:AbstractColumnDef,<:AGPanel,<:AGURL}}
     for field in fieldnames(typeof(l))
         if field ∉ skip_fileds
             l_field = getfield(l, field)
