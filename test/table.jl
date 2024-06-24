@@ -97,9 +97,9 @@
         result = AGTable(
             name = "string_tuples",
             row_data = [
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
             ],
             resize = true,
             flex = false,
@@ -164,12 +164,12 @@
         result = AGTable(
             name = "mixed_tuples",
             row_data = [
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
             ],
             resize = true,
             flex = true,
@@ -257,12 +257,12 @@
         result = AGTable(
             name = "mixed_tuples",
             row_data = [
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => 1),
             ],
             resize = true,
             flex = true,
@@ -433,12 +433,12 @@
         result = AGTable(
             name = "mixed_tuples",
             row_data = [
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
             ],
             resize = true,
             flex = true,
@@ -715,9 +715,9 @@ end
         result = AGTable(
             name = "string_dicts",
             row_data = [
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
             ],
             resize = true,
             flex = false,
@@ -782,12 +782,12 @@ end
         result = AGTable(
             name = "mixed_dicts",
             row_data = [
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
             ],
             resize = true,
             flex = true,
@@ -867,12 +867,12 @@ end
         result = AGTable(
             name = "mixed_dicts",
             row_data = [
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => 1),
             ],
             resize = true,
             flex = true,
@@ -1035,12 +1035,12 @@ end
         result = AGTable(
             name = "mixed_dicts",
             row_data = [
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
             ],
             resize = true,
             flex = true,
@@ -1308,9 +1308,9 @@ end
         result = AGTable(
             name = "string_structs",
             row_data = [
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
             ],
             resize = true,
             flex = false,
@@ -1375,12 +1375,12 @@ end
         result = AGTable(
             name = "mixed_structs",
             row_data = [
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
             ],
             resize = true,
             flex = true,
@@ -1460,12 +1460,12 @@ end
         result = AGTable(
             name = "mixed_structs",
             row_data = [
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => 1),
             ],
             resize = true,
             flex = true,
@@ -1628,12 +1628,12 @@ end
         result = AGTable(
             name = "mixed_structs",
             row_data = [
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
-                Dict("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => DateTime("2024-01-01T00:00:00"), "a" => 1),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
+                Dict{String,Any}("c" => "text", "b" => "2024-01-01", "a" => "1"),
             ],
             resize = true,
             flex = true,
@@ -1797,6 +1797,177 @@ end
         @test table == result
     end
 end
+
+@testset verbose = true "Server-side model" begin
+    @testset "Case №1: Without column_defs" begin
+        table = ag_table(
+            AGURL("http://0.0.0.0:8000/test_data");
+            name = "server_side",
+            resize = true,
+            flex = true,
+            header_height = 50,
+            row_height = 50,
+            column_filter = true,
+        )
+
+        result = AGTable(
+            name = "server_side",
+            row_data = AGURL("http://0.0.0.0:8000/test_data"),
+            resize = true,
+            flex = true,
+            header_height = 50,
+            row_height = 50,
+            column_filter = true,
+            column_defs = AbstractColumnDef[]
+        )
+
+        @test table == result
+    end
+
+    @testset "Case №1: With column_defs" begin
+        table = ag_table(
+            AGURL("http://0.0.0.0:8000/test_data"),
+            ag_define_headers(["col1", "col2", "col3"])...;
+            name = "server_side",
+            resize = true,
+            flex = true,
+            header_height = 50,
+            row_height = 50,
+            column_filter = true,
+        )
+
+        result = AGTable(
+            name = "server_side",
+            row_data = AGURL("http://0.0.0.0:8000/test_data"),
+            resize = true,
+            flex = true,
+            header_height = 50,
+            row_height = 50,
+            column_filter = true,
+            column_defs = AbstractColumnDef[
+                AgStringColumnDef(
+                    field_name = "col1",
+                    header_name = "col1",
+                    filter = false,
+                    default_sort = nothing,
+                    width = nothing,
+                    cell_background = "#fff",
+                    rect_background = "#fff",
+                    color = "#000",
+                    text_align = AG_LEFT,
+                    color_map = Dict{String,String}(),
+                    threshold = nothing,
+                ),
+                AgStringColumnDef(
+                    field_name = "col2",
+                    header_name = "col2",
+                    filter = false,
+                    default_sort = nothing,
+                    width = nothing,
+                    cell_background = "#fff",
+                    rect_background = "#fff",
+                    color = "#000",
+                    text_align = AG_LEFT,
+                    color_map = Dict{String,String}(),
+                    threshold = nothing,
+                ),
+                AgStringColumnDef(
+                    field_name = "col3",
+                    header_name = "col3",
+                    filter = false,
+                    default_sort = nothing,
+                    width = nothing,
+                    cell_background = "#fff",
+                    rect_background = "#fff",
+                    color = "#000",
+                    text_align = AG_LEFT,
+                    color_map = Dict{String,String}(),
+                    threshold = nothing,
+                ),
+            ]
+        )
+
+        @test table == result
+
+        table = ag_table(
+            AGURL("http://0.0.0.0:8000/test_data"),
+            ag_define_headers(["col1", "col2", "col3"])...,
+            AgStringColumnDef(
+                    field_name = "col1",
+                    header_name = "col1",
+                    filter = true,
+                    default_sort = AG_ASC,
+                    width = nothing,
+                    cell_background = "#fff",
+                    rect_background = "#fff",
+                    color = "#000",
+                    text_align = AG_LEFT,
+                    color_map = Dict{String,String}(),
+                    threshold = nothing,
+            );
+            name = "server_side",
+            resize = true,
+            flex = true,
+            header_height = 50,
+            row_height = 50,
+            column_filter = true,
+        )
+
+        result = AGTable(
+            name = "server_side",
+            row_data = AGURL("http://0.0.0.0:8000/test_data"),
+            resize = true,
+            flex = true,
+            header_height = 50,
+            row_height = 50,
+            column_filter = true,
+            column_defs = AbstractColumnDef[
+                AgStringColumnDef(
+                    field_name = "col1",
+                    header_name = "col1",
+                    filter = true,
+                    default_sort = AG_ASC,
+                    width = nothing,
+                    cell_background = "#fff",
+                    rect_background = "#fff",
+                    color = "#000",
+                    text_align = AG_LEFT,
+                    color_map = Dict{String,String}(),
+                    threshold = nothing,
+                ),
+                AgStringColumnDef(
+                    field_name = "col2",
+                    header_name = "col2",
+                    filter = false,
+                    default_sort = nothing,
+                    width = nothing,
+                    cell_background = "#fff",
+                    rect_background = "#fff",
+                    color = "#000",
+                    text_align = AG_LEFT,
+                    color_map = Dict{String,String}(),
+                    threshold = nothing,
+                ),
+                AgStringColumnDef(
+                    field_name = "col3",
+                    header_name = "col3",
+                    filter = false,
+                    default_sort = nothing,
+                    width = nothing,
+                    cell_background = "#fff",
+                    rect_background = "#fff",
+                    color = "#000",
+                    text_align = AG_LEFT,
+                    color_map = Dict{String,String}(),
+                    threshold = nothing,
+                ),
+            ]
+        )
+
+        @test table == result
+    end
+end
+
 
 @testset verbose = true "Table panel" begin
 

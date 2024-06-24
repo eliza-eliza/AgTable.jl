@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import AgGrid from "./aggrid.jsx";
+import AgGridUrl from "./aggrid_url.jsx";
 
 const Panel = React.memo(({ table }) => {
     const [displayedIndex, setDisplayedIndex] = useState(() => localStorage.getItem(table.uuidKey) || 0);
@@ -38,7 +39,13 @@ const Panel = React.memo(({ table }) => {
                     </div>
                 ))}
             </div>
-            <AgGrid table={table.tables[displayedIndex]} height={tableHeight} index={displayedIndex} uuidKey={table.uuidKey} />
+            {
+                table.tables[displayedIndex].rowData.url
+                ?
+                    <AgGridUrl table={table.tables[displayedIndex]} height={tableHeight} index={displayedIndex} uuidKey={table.uuidKey} />
+                :
+                    <AgGrid table={table.tables[displayedIndex]} height={tableHeight} index={displayedIndex} uuidKey={table.uuidKey} />
+            }
         </div>
     );
 });

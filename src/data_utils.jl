@@ -16,7 +16,7 @@ function flatten(data::AbstractDict{K,V}; delimiter::AbstractString = "_") where
         key = string(key)
         if isa(value, AbstractDict)
             for (k, v) in flatten(value; delimiter = delimiter)
-                result[key * delimiter * k] = v
+                result[key*delimiter*k] = v
             end
         else
             result[key] = value
@@ -32,7 +32,7 @@ function flatten(data::T; delimiter::AbstractString = "_") where {T}
         key = string(key)
         if !issimple(value)
             for (k, v) in flatten(value; delimiter = delimiter)
-                result[key * delimiter * k] = v
+                result[key*delimiter*k] = v
             end
         else
             result[key] = value
@@ -104,4 +104,23 @@ function format_row_data(
         push!(n_rows, n_row)
     end
     return n_defs, n_rows
+end
+
+function order_column_defs(column_defs::Tuple{Vararg{AbstractColumnDef}})
+    new_column_defs = Vector{AbstractColumnDef}()
+    for coldef in column_defs
+        index = findfirst(z -> z.field_name == coldef.field_name, new_column_defs)
+        index !== nothing ? new_column_defs[index] = coldef : push!(new_column_defs, coldef)
+    end
+    return new_column_defs
+end
+
+function ag_define_headers(headers::AbstractArray{String})
+    column_defs = Vector{AbstractColumnDef}()
+
+    for name in headers
+        push!(column_defs, AgStringColumnDef(; field_name = name))
+    end
+
+    return column_defs
 end

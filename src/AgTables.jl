@@ -5,7 +5,10 @@ export ag_panel,
     ag_show,
     ag_save
 
+export ag_define_headers
+
 export AGPanel,
+    AGURL,
     AGTable,
     AGFormatter,
     AGThreshold
@@ -60,6 +63,21 @@ using .AGColumns
 include("data_utils.jl")
 
 """
+    AGURL(url::String)
+
+Type that contains the necessary information about server-side model for table.
+
+See also: [`ag_table`](@ref).
+"""
+struct AGURL
+    url::String
+
+    function AGURL(url::String)
+        new(url)
+    end
+end
+
+"""
     AGTable
 
 A base type that contains the necessary information to visualize a table.
@@ -68,7 +86,7 @@ See also: [`ag_table`](@ref), [`ag_show`](@ref), [`ag_save`](@ref).
 """
 Base.@kwdef struct AGTable
     name::String
-    row_data::Vector{Dict{String,Any}}
+    row_data::Union{Vector{Dict{String,Any}},AGURL}
     resize::Bool
     flex::Bool
     header_height::Integer
@@ -86,13 +104,13 @@ function Base.show(io::IO, m::MIME"text/html", h::AGTable)
 end
 
 """
-    ag_table(data::Vector{T}, column_defs::AbstractColumnDef...; kw...) -> AGTable
+    ag_table(row_data::Vector{T}, column_defs::AbstractColumnDef...; kw...) -> AGTable
 
-Creates a table using `data`, where elements can be `NamedTuple`s, `Dict`s, or custom types.
+Creates a table using `row_data`, where elements can be `NamedTuple`s, `Dict`s, custom types or `AGURL` for server-side model.
 With `column_defs` you can configure parameters and formatting of [`columns`](@ref column).
 
 !!! warning
-    Adding more than 100K `data` rows to a table may cause performance issues.
+    Adding more than 100K `row_data` rows to a table may cause performance issues.
 
 ## Keyword arguments
 | Name::Type | Default (Possible values) | Description |
@@ -120,6 +138,29 @@ function ag_table(
     return AGTable(
         name = name,
         row_data = new_row_data,
+        resize = resize,
+        flex = flex,
+        header_height = header_height,
+        row_height = row_height,
+        column_filter = column_filter,
+        column_defs = new_column_defs,
+    )
+end
+
+function ag_table(
+    row_data::AGURL,
+    column_defs::AbstractColumnDef...;
+    name::AbstractString = "Sheet$(AG_TABLE_ID[] += 1)",
+    resize::Bool = true,
+    flex::Bool = true,
+    header_height::Integer = 40,
+    row_height::Integer = 39,
+    column_filter::Bool = false,
+)
+    new_column_defs = order_column_defs(column_defs)
+    return AGTable(
+        name = name,
+        row_data = row_data,
         resize = resize,
         flex = flex,
         header_height = header_height,
@@ -212,6 +253,10 @@ function Serde.SerJson.ser_name(::Type{<:AGPanel}, ::Val{T}) where {T}
 end
 
 function Serde.SerJson.ser_name(::Type{<:AGTable}, ::Val{T}) where {T}
+    return to_camelcase(T)
+end
+
+function Serde.SerJson.ser_name(::Type{<:AGURL}, ::Val{T}) where {T}
     return to_camelcase(T)
 end
 
