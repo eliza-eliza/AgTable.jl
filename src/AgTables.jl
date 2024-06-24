@@ -140,6 +140,7 @@ Base.@kwdef struct AGPanel
     name::String
     tables::Tuple{Vararg{AGTable}}
     bottom::Bool
+    sync::Bool
     uuid_key::String
     license_key::String
 end
@@ -162,6 +163,7 @@ Creates a panel combining several [`tables`](@ref table).
 |:-----------|:-----------------------|:------------|
 | `name::String` |` "AgTables ❤️ Julia"` | Panel name (will be displayed in the browser tab title). |
 | `bottom::Bool` | `false` | Move the table tabs to the bottom of the page. |
+| `sync::Bool` | `false` | Synchronization of set filters. |
 
 See also: [`ag_show`](@ref), [`ag_save`](@ref).
 """
@@ -169,11 +171,13 @@ function ag_panel(
     tables::AGTable...;
     name::AbstractString = "AgTables ❤️ Julia",
     bottom::Bool = false,
+    sync::Bool = false,
 )::AGPanel
     return AGPanel(
         name = name,
         tables = tables,
         bottom = bottom,
+        sync = sync,
         uuid_key = string(UUIDs.uuid4()),
         license_key = get(ENV, "AG_GRID_LICENSE_KEY", ""),
     )

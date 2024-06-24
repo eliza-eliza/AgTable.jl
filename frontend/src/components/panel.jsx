@@ -41,6 +41,7 @@ const Panel = React.memo(({ table }) => {
             <AgGrid 
                 table={table.tables[displayedIndex]} 
                 height={tableHeight} 
+                sync={table.sync}
                 index={displayedIndex} 
                 uuidKey={table.uuidKey} 
             />

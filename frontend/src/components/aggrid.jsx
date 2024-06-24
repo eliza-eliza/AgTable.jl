@@ -10,14 +10,14 @@ import NumberFilter from "./custom_filters/number_filter.jsx";
 import DateFilter from "./custom_filters/date_filter.jsx";
 import ColumnFilter from "./custom_filters/column_filter.jsx";
 
-const AgGrid = ({ table, height, index, uuidKey }) => {
+const AgGrid = ({ table, height, sync, index, uuidKey }) => {
     const [filters, setFilters] = useState(false);
     const [filterLayout, setFilterLayout] = useState(null);
     const [filterHeight, setFilterHeight] = useState(null);
 
     const initialState = JSON.parse(localStorage.getItem(uuidKey + index));
     const initialWidth = localStorage.getItem(uuidKey + index + "width");
-    const commonFilterModel = localStorage.getItem("filterModel");
+    const commonFilterModel = sync ? localStorage.getItem("filterModel") : null;
 
     const getCellRenderer = (params, column) => {
         let value = params.value;
@@ -228,6 +228,12 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
     };
 
     const onFirstDataRendered = useCallback((params) => {
+        if (commonFilterModel != "undefined" && commonFilterModel) {
+            Object.entries(JSON.parse(commonFilterModel)).forEach(([key, value]) => {
+                params.api.setColumnFilterModel(key, value)
+                    .then(() => params.api.onFilterChanged());
+            });
+        }
         initialState && table.columnDefs.map((column) => {
             if (column.filterInclude && column.filterInclude.length) {
                 applyFilter(params, column.fieldName, column.filterInclude.filter(value => !column.filterExclude.includes(value)));
@@ -240,11 +246,6 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
                 const filteredValues = Object.keys(uniqueValues).filter(value => uniqueValues[value]);
                 applyFilter(params, column.fieldName, filteredValues.filter(value => !column.filterExclude.includes(value)));
             }
-        });
-
-        commonFilterModel != "undefined" && Object.entries(JSON.parse(commonFilterModel)).forEach(([key, value]) => {
-            params.api.setColumnFilterModel(key, value)
-                .then(() => params.api.onFilterChanged());
         });
     }, [table]);
 
@@ -273,7 +274,7 @@ const AgGrid = ({ table, height, index, uuidKey }) => {
         const filtersToolPanel = params.api.getToolPanelInstance("filters");
         filtersToolPanel && localStorage.setItem(uuidKey + index + "width", filtersToolPanel.eGui.clientWidth);
     };
-    
+
 
     return (
         <div className="ag-theme-quartz aggrid" style={height}>
