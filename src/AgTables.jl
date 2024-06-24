@@ -46,7 +46,7 @@ export AG_ASC,
 
 using Serde
 using OrderedCollections
-using Dates, SHA, UUIDs, HTTP
+using Dates, SHA, UUIDs
 
 abstract type AbstractColumnDef end
 
@@ -63,29 +63,17 @@ using .AGColumns
 include("data_utils.jl")
 
 """
-    AGURL(url::String; kw...)
+    AGURL(url::String)
 
 Type that contains the necessary information about server-side model for table.
-
-## Keyword arguments
-| Name::Type | Default (Possible values) | Description |
-|:-----------|:--------------------------|:------------|
-| `page_size::Integer` | `100` | Block size for the data request. |
 
 See also: [`ag_table`](@ref).
 """
 struct AGURL
     url::String
-    page_size::Integer
 
-    function AGURL(
-        url::String;
-        page_size::Integer = 100,        
-    )
-        new(
-            url,
-            page_size,
-        )
+    function AGURL(url::String)
+        new(url)
     end
 end
 

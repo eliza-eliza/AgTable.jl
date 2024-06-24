@@ -1812,7 +1812,7 @@ end
 
         result = AGTable(
             name = "server_side",
-            row_data = AGURL("http://0.0.0.0:8000/test_data"; page_size = 100),
+            row_data = AGURL("http://0.0.0.0:8000/test_data"),
             resize = true,
             flex = true,
             header_height = 50,
@@ -1838,7 +1838,7 @@ end
 
         result = AGTable(
             name = "server_side",
-            row_data = AGURL("http://0.0.0.0:8000/test_data"; page_size = 100),
+            row_data = AGURL("http://0.0.0.0:8000/test_data"),
             resize = true,
             flex = true,
             header_height = 50,
@@ -1915,7 +1915,7 @@ end
 
         result = AGTable(
             name = "server_side",
-            row_data = AGURL("http://0.0.0.0:8000/test_data"; page_size = 100),
+            row_data = AGURL("http://0.0.0.0:8000/test_data"),
             resize = true,
             flex = true,
             header_height = 50,

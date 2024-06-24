@@ -155,13 +155,14 @@ function getStringParams(model) {
         .join('&');
 }
 
-export async function fetchRowData(url, pageSize, startRow, filterModel, sortModel) {
+export async function fetchRowData(url, params) {
+    let {startRow, endRow, filterModel, sortModel} = params;
     let filters = getStringParams(filterModel);
     const sort = sortModel?.map(({ colId, sort }) => `sort_${colId}=${sort}`).join('&') || '';
 
     return await fetchData(
         url,
-        `?page=${startRow / pageSize + 1}&page_size=${pageSize}&${filters}&${sort}`
+        `?startRow=${startRow}&endRow=${endRow}&${filters}&${sort}`
     );
 }
 

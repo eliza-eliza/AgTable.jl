@@ -4,12 +4,9 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-enterprise";
 import "./aggrid.css";
-import { ModuleRegistry, ServerSideRowModelModule } from "ag-grid-enterprise";
 import { getUrlCellRenderer, getCellStyle, getFilterItemRenderer, getFilterComponent } from "./utils/aggrid_utils.jsx";
-import { extractTimeInMilliseconds, fetchRowData, fetchFilterValues, getFilterHeight, generateFilterLayout } from "./utils/utils.js";
+import { fetchRowData, fetchFilterValues, getFilterHeight, generateFilterLayout } from "./utils/utils.js";
 import ColumnFilter from "./custom_filters/column_filter.jsx";
-
-ModuleRegistry.registerModules([ServerSideRowModelModule]);
 
 const AgGridUrl = ({ table, height, index, uuidKey }) => {
     const [filters, setFilters] = useState(false);
@@ -37,7 +34,6 @@ const AgGridUrl = ({ table, height, index, uuidKey }) => {
                 if (coldef.filter == "text") {
                     colDef.filterParams = {
                         buttons: ["reset", "apply"],
-                        refreshValuesOnOpen: true,
                         cellRenderer: (params) => getFilterItemRenderer(params, coldef),
                         values: async (params) => {
                             params.success(await getSetFilterValues(params, coldef.fieldName));
@@ -84,7 +80,7 @@ const AgGridUrl = ({ table, height, index, uuidKey }) => {
                     expandFilters: true,
                     suppressFilterSearch: false,
                     suppressSyncLayoutWithGrid: true,
-                    suppressFiltersToolPanel: false
+                    suppressFiltersToolPanel: true
                 },
                 width: initialWidth && parseFloat(initialWidth) || 223,
             },
@@ -119,6 +115,7 @@ const AgGridUrl = ({ table, height, index, uuidKey }) => {
         if (!filters) return;
 
         const filtersToolPanel = params.api.getToolPanelInstance("filters");
+        filtersToolPanel?.expandFilters();
         filterLayout && filtersToolPanel?.setFilterLayout([filterLayout]);
 
         let filtersList = document.getElementsByClassName("ag-filter-toolpanel-instance");
@@ -134,7 +131,7 @@ const AgGridUrl = ({ table, height, index, uuidKey }) => {
         const colId = params.columns[0]?.colId;
         allColumns.forEach(col => {
             if (col.getColDef().filter === "agSetColumnFilter") {
-                params.api.getFilterInstance(col.getColId(), instance => {
+                params.api.getColumnFilterInstance(col.getColId()).then(instance => {
                     if (instance && colId && col.getColId() !== colId) {
                         instance.refreshFilterValues();
                     }
@@ -152,9 +149,8 @@ const AgGridUrl = ({ table, height, index, uuidKey }) => {
     };
 
     const getRows = async (params) => {
-        const { startRow, filterModel, sortModel } = params.request;
-        const data = await fetchRowData(table.rowData.url, table.rowData.pageSize, startRow, filterModel, sortModel);
-        params.success({ rowData: data, getLastRowIndex: startRow + data.length });
+        const data = await fetchRowData(table.rowData.url, params.request);
+        params.success({ rowData: data, getLastRowIndex: params.request.startRow + data.length });
     };
 
     const getSetFilterValues = async (params, columnId) => {
@@ -169,7 +165,6 @@ const AgGridUrl = ({ table, height, index, uuidKey }) => {
                 rowModelType="serverSide"
                 serverSideDatasource={{ getRows: getRows }}
                 maxBlocksInCache={0}
-                cacheBlockSize={table.rowData.pageSize}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
                 sideBar={filters && sideBar}

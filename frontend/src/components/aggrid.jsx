@@ -4,7 +4,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-enterprise";
 import "./aggrid.css";
-import { extractTimeInMilliseconds, getFilterHeight, generateFilterLayout } from "./utils/utils.js";
+import { getFilterHeight, generateFilterLayout } from "./utils/utils.js";
 import { getCellRenderer, getCellStyle, getFilterItemRenderer, getFilterComponent } from "./utils/aggrid_utils.jsx";
 import ColumnFilter from "./custom_filters/column_filter.jsx";
 

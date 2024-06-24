@@ -3,7 +3,7 @@ using AgTables
 coldefs = ag_define_headers(["id", "currency_code", "exchange_rate", "market_cap", "daily_volume", "status"])
 
 table = ag_table(
-    AGURL("http://127.0.0.1:8080/currency"; page_size = 20),
+    AGURL("http://127.0.0.1:8080/currency"),
     coldefs...,
     AgStringColumnDef(
         field_name = "currency_code",
@@ -12,7 +12,12 @@ table = ag_table(
     AgStringColumnDef(
         field_name = "status",
         filter = true,
-        rect_background = "red",
+        rect_background = "#eeeeee",
+        color_map = Dict(
+                    "Active" => "green",
+                    "Not Found" => "black",
+                    "Not Active" => "red",
+                ),
     ),
     AgNumberColumnDef(
         field_name = "id",
